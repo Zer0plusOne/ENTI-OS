@@ -1,118 +1,177 @@
-#include <iostream> //Libreria de entrada y salida
-#include <vector> //Libreria de vectores para almacenar datos
-#include <thread> //Libreria de hilos
-#include <chrono> //Libreria de tiempo
-#include <string> //Libreria de strings
+#include <iostream>
+#include <vector>
+#include <string>
+#include <chrono>
+#include <cstdlib>
+#include <thread>
 
 using namespace std;
+// incluimos los vectores que almacenaran en memoria los users y las passwords (les insertamos los valores de administrador manualmente)
+vector<string> users = { "admin" };
+vector<string> passwords = { "admin" };
+string creacionUserName;
+string creacionPassword;
 
-//generamos los vectores que almacenaran los usuarios y las contraseñas
-vector<string> users;
-vector<string> passwords;
-
-string adminUser = "admin";
-string adminPass = "admin";
-
-bool adminLogin(){
-    //Pedimos los datos de usuario y contrasenia;
-    cout<< "Username:";
-    cin>> adminUser;
-    cout<<"Password:";
-    cin>> adminPass;
-
-    if(adminUser == "admin" && adminPass == "admin"){
-        cout << "Bienvenido administrador" << endl;
-        return true;
-    }
-    else{
-        cout << "Usuario o contrasenia incorrecta, blyat" << endl;
-        adminLogin();
-    }
+//Funcion para limpiar las pantallas segun el sistema operativo en el que se corra el programa
+void screenClear() {
+#ifdef _WIN32
+    system("cls");
+#else
+    system("clear");
+#endif
 }
-void adminPanel(){
-            string userName;
-            string userPswd;
 
-            string acutalAdminPass = adminPass;
-            cout<< "ADMIN PANEL" << endl;
-            cout<< "1. Crear usuario" << endl;
-            cout<< "2. Modificar conrasenia de administrador" << endl;
-            cout<< "3. Eliminar usuario" << endl;
-            cout<< "4. Volver" << endl;
+// Panel de administrador
 
-            int option;
+void adminPanel() {
 
-            cin >> option;
+    cout << "Panel de administrador" << endl;
+    cout << "\n" << endl;
+    cout << "1. Crear usuario" << endl;
+    cout << "2. Modificar password de administrador" << endl;
+    cout << "3. Eliminar usuarios" << endl;
+    cout << "4. Cerrar sesion" << endl;
 
-            switch (option){
-                case 1:
-                // Damos al admin la posibilidad de crear un nuevo usuario
-                    cout<<"Username:";
-                    cin>> userName;
-                    cout<<"Password:";
-                    cin>> userPswd;
+    int seleccion;
 
-                    //Agregamos el nuevo usuario y la contrasenia a los vectores
-                    users.push_back(userName);
-                    passwords.push_back(userPswd);
+    cin >> seleccion;
 
-                    cout<<"Usuario y contraseña creado exitosamente" << endl;
-                    cout<< "Regresando al menu principal..."<<endl;
-                    this_thread::sleep_for(chrono::seconds(2)); // Tiempo de espera
-                    break;
-                case 2:
-                    cout<<"ingresa la contraseña actual:";
-                    cin>> acutalAdminPass;
-                    break;  
-                case 3:
-                    break;
-                case 4:
-                    break;
-            }
-}
-void menuAdmin(){
-    cout << "1. ADMIN PANEL" << endl;
-    cout << "2. Gestionar usuarios" << endl;
-    cout << "3. Cambiar usuario" << endl;
-    cout << "4. Gestionar directorios" << endl;
-    cout << "5. Gestionar tareas" << endl;
-    cout << "6. Salir" << endl;
+    string deleteUser; // pese a que no queria declarar las estas variables con tal de no inicializarlas en caso de no ser necesario, las tengo que inicializar aqui porque sino da el siguiente error: transfer of control bypasses initialization of:C/C++(546)
+    string adminPassword;
 
-    int option;
+    switch (seleccion) {
 
-    cin >> option;
+    case 1:
+        screenClear();
+        cout << "Menu de creacion de usuario" << endl;
+        cout << "\n" << endl;
+        cout << "Ingresa el nombre de usuario: ";
+        cin >> creacionUserName;
+        cout << "Ingresa password para el usuario: ";
+        cin >> creacionPassword;
 
-    switch (option){
-        case 1:
+        if (creacionPassword == "" || creacionUserName == "") {
+            cout << "Si hombre, se te ha olvidado dar nombre o poner contraseña al usuario, intentalo de nuevo listillo" << endl;
+            this_thread::sleep_for(chrono::seconds(1));
             adminPanel();
-            break;            
-        case 2:
-            break;
-        case 3:
-            break;
-        case 4:
-            break;
-        case 5:
-            break;
-        case 6:
-            break;
-    }
-}
+        }
+        else {
+            users.push_back(creacionUserName);
+            passwords.push_back(creacionPassword);
+            cout << "Nuevo usuario aniadido al sistema..." << endl;
+            cout << "Volviendo al panel de aministrador..." << endl;
+            this_thread::sleep_for(chrono::seconds(2));
+            screenClear();
+            adminPanel();
+        }
+        break;
+    case 2:
+        cout << "Menu de modificacion de password de administrador" << endl;
+        cout << "\n" << endl;
+        cout << "Ingresa la contrasenia actual:" << endl;
+        cin >> adminPassword;
 
-void menu(){
-    cout << "1. " << endl;
-    cout << "2. Cargar archivo" << endl;
-    cout << "3. Salir" << endl;
+        if (adminPassword != passwords[0]) {
+            cout << "credenciales incorrectas, volviendo al panel de administrador..." << endl;
+            this_thread::sleep_for(chrono::seconds(2));
+            screenClear();
+            adminPanel();
+
+        }
+        else {
+            cout << "Ingresa la nueva contrasenia:" << endl;
+            cin >> passwords[0];
+            cout << "Contrasenia cambiada con exito" << endl;
+            this_thread::sleep_for(chrono::seconds(2));
+            screenClear();
+            adminPanel();
+        }
+        break;
+    case 3:
+        cout << "Menu de eliminacion de usuario" << endl;
+        cout << "\n" << endl;
+        // mostramos todo el vector users
+        cout << "Usuarios:" << endl;
+        for (const auto& user : users) { // declaramos la constante user con auto para que el compilador pueda detectar el tipo de dato que tiene el vector (gracias GPT por la ayuda en esto y ahorrarme sacar uno a uno los valores del vector)
+            cout << user << endl;
+        }
+        cout << "Selecciona el usuario a eliminar: ";
+        cin >> deleteUser;
+
+        for (int i = 1; i < users.size(); i++) { // i = 1 ya que el admin no quiero que se pueda borrar
+            if (deleteUser == "1" || deleteUser == "0") {
+                cout << "Usuario administrador no modificable desde el programa, modifica el codigo fuente si realmente es que quieres borrarlo listo" << endl;
+                this_thread::sleep_for(chrono::seconds(2));
+                screenClear();
+                adminPanel();
+            }
+            else {
+                users.erase(users.begin() + i);
+                passwords.erase(passwords.begin() + i);
+                cout << "Usuario eliminado con exito" << endl;
+                cout << "Volviendo al panel de administrador..." << endl;
+                this_thread::sleep_for(chrono::seconds(2));
+                screenClear();
+                adminPanel();
+            }
+        }
+        break;
+    case 4:
+        string user;
+        string password;
+        cout << "Usuario:";
+        cin >> user;
+        cout << "Contrasenia:";
+        cin >> password;
+
+        if (user == users[0] && password == passwords[0]) {
+            cout << "Iniciando sesion como administrador" << endl;
+            this_thread::sleep_for(chrono::seconds(2));
+            screenClear();
+            adminPanel();
+        }
+        else {
+            for (int i = 1; i < users.size(); i++) { // bucle for que recorre los vectores saltando el primero (es el de admin)
+                if (user == users[i] && password == passwords[i]) { // en caso que las credenciales user y password esten almacenadas en la misma posicion, acceso concedido
+                    cout << "Iniciando sesion" << endl;
+                    screenClear();
+                    this_thread::sleep_for(chrono::seconds(2));
+                    cout << "ENDPOINT PROVISIONAL" << endl;
+                    break;
+                }
+            }
+        }
+        break;
+    }
 }
 
 
 int main() {
-    adminLogin();
-    if (adminLogin()) {
-        menu();
+
+    string user;
+    string password;
+    cout << "Usuario:";
+    cin >> user;
+    cout << "Contrasenia:";
+    cin >> password;
+
+    if (user == users[0] && password == passwords[0]) {
+        cout << "Iniciando sesion como administrador" << endl;
+        this_thread::sleep_for(chrono::seconds(2));
+        screenClear();
+        adminPanel();
     }
-
-    menu();
-
-    return 0;
+    else {
+        for (int i = 1; i < users.size(); i++) { // bucle for que recorre los vectores saltando el primero (es el de admin)
+            if (user == users[i] && password == passwords[i]) { // en caso que las credenciales user y password esten almacenadas en la misma posicion, acceso concedido
+                cout << "Iniciando sesion" << endl;
+                screenClear();
+                this_thread::sleep_for(chrono::seconds(2));
+                cout << "ENDPOINT PROVISIONAL" << endl;
+                break;
+            }
+        }
+    }
 }
+
+
