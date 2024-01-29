@@ -23,9 +23,9 @@ void screenClear() {
 
 // Panel de administrador
 
-void adminPanel() {
+void gestionPanel() {
 
-    cout << "Panel de administrador" << endl;
+    cout << "Panel de gestion" << endl;
     cout << "\n" << endl;
     cout << "1. Crear usuario" << endl;
     cout << "2. Modificar password de administrador" << endl;
@@ -53,7 +53,7 @@ void adminPanel() {
         if (creacionPassword == "" || creacionUserName == "") {
             cout << "Si hombre, se te ha olvidado dar nombre o poner contraseña al usuario, intentalo de nuevo listillo" << endl;
             this_thread::sleep_for(chrono::seconds(1));
-            adminPanel();
+            gestionPanel();
         }
         else {
             users.push_back(creacionUserName);
@@ -62,7 +62,7 @@ void adminPanel() {
             cout << "Volviendo al panel de aministrador..." << endl;
             this_thread::sleep_for(chrono::seconds(2));
             screenClear();
-            adminPanel();
+            gestionPanel();
         }
         break;
     case 2:
@@ -75,7 +75,7 @@ void adminPanel() {
             cout << "credenciales incorrectas, volviendo al panel de administrador..." << endl;
             this_thread::sleep_for(chrono::seconds(2));
             screenClear();
-            adminPanel();
+            gestionPanel();
 
         }
         else {
@@ -84,7 +84,7 @@ void adminPanel() {
             cout << "Contrasenia cambiada con exito" << endl;
             this_thread::sleep_for(chrono::seconds(2));
             screenClear();
-            adminPanel();
+            gestionPanel();
         }
         break;
     case 3:
@@ -103,7 +103,7 @@ void adminPanel() {
                 cout << "Usuario administrador no modificable desde el programa, modifica el codigo fuente si realmente es que quieres borrarlo listo" << endl;
                 this_thread::sleep_for(chrono::seconds(2));
                 screenClear();
-                adminPanel();
+                gestionPanel();
             }
             else {
                 users.erase(users.begin() + i);
@@ -112,7 +112,7 @@ void adminPanel() {
                 cout << "Volviendo al panel de administrador..." << endl;
                 this_thread::sleep_for(chrono::seconds(2));
                 screenClear();
-                adminPanel();
+                gestionPanel();
             }
         }
         break;
@@ -128,7 +128,7 @@ void adminPanel() {
             cout << "Iniciando sesion como administrador" << endl;
             this_thread::sleep_for(chrono::seconds(2));
             screenClear();
-            adminPanel();
+            gestionPanel();
         }
         else {
             for (int i = 1; i < users.size(); i++) { // bucle for que recorre los vectores saltando el primero (es el de admin)
@@ -145,33 +145,92 @@ void adminPanel() {
     }
 }
 
+void adminMenu() {
+
+    cout << "Estas loggeado como ADMINISTRADOR" << endl;
+    cout << "\n" << endl;
+    cout << "1. Gestionar usuarios" << endl;
+    cout << "2. Cambiar usuario" << endl;
+    cout << "3. Gestionar directorios" << endl;
+    cout << "4. Gesttionar tareas" << endl;
+    cout << "5. salir" << endl;
+
+    int seleccion;
+
+    cin >> seleccion;
+
+    string user;
+    string password;
+
+    switch (seleccion) {
+    case 1:
+        screenClear();
+        gestionPanel();
+        break;
+    case 2:
+        cout << "Usuario:";
+        cin >> user;
+        cout << "Contrasenia:";
+        cin >> password;
+
+        if (user == users[0] && password == passwords[0]) { // en caso de ingresar las credenciales almacenadas en el punto 0 del vector, las cuales corresponden siempre al admin, inicia sesion como admin
+            cout << "Iniciando sesion como administrador" << endl;
+            this_thread::sleep_for(chrono::seconds(2)); // timeout de 2 segundos 
+            screenClear(); // Funcion para limpiar la pantalla
+            adminMenu();
+        }
+        else {
+            for (int i = 1; i < users.size(); i++) { // bucle for que recorre los vectores saltando el primero (indice 0 ya que es el de admin)
+                if (user == users[i] && password == passwords[i]) { // en caso que las credenciales user y password esten almacenadas en la misma posicion, acceso concedido
+                    cout << "Iniciando sesion" << endl;
+                    screenClear();
+                    this_thread::sleep_for(chrono::seconds(2));
+                    cout << "ENDPOINT PROVISIONAL" << endl;
+                }
+                else {
+                    cout << "Usuario o contraseña incorrecto" << endl;
+                }
+            }
+        }
+        break;
+    case 3:
+        break;
+    case 4:
+        break;
+    case 5:
+        break;
+    }
+
+}
+
 
 int main() {
 
     string user;
     string password;
+
     cout << "Usuario:";
     cin >> user;
     cout << "Contrasenia:";
     cin >> password;
 
-    if (user == users[0] && password == passwords[0]) {
+    if (user == users[0] && password == passwords[0]) { // en caso de ingresar las credenciales almacenadas en el punto 0 del vector, las cuales corresponden siempre al admin, inicia sesion como admin
         cout << "Iniciando sesion como administrador" << endl;
-        this_thread::sleep_for(chrono::seconds(2));
-        screenClear();
-        adminPanel();
+        this_thread::sleep_for(chrono::seconds(2)); // timeout de 2 segundos 
+        screenClear(); // Funcion para limpiar la pantalla
+        adminMenu();
     }
     else {
-        for (int i = 1; i < users.size(); i++) { // bucle for que recorre los vectores saltando el primero (es el de admin)
+        for (int i = 1; i < users.size(); i++) { // bucle for que recorre los vectores saltando el primero (indice 0 ya que es el de admin)
             if (user == users[i] && password == passwords[i]) { // en caso que las credenciales user y password esten almacenadas en la misma posicion, acceso concedido
                 cout << "Iniciando sesion" << endl;
                 screenClear();
                 this_thread::sleep_for(chrono::seconds(2));
                 cout << "ENDPOINT PROVISIONAL" << endl;
-                break;
+            }
+            else {
+                cout << "Usuario o contraseña incorrecto" << endl;
             }
         }
     }
 }
-
-
