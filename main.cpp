@@ -9,11 +9,11 @@ using namespace std;
 // incluimos los vectores que almacenaran en memoria los users y las passwords (les insertamos los valores de administrador manualmente)
 vector<string> users = { "admin" };
 vector<string> passwords = { "admin" };
-vector<string> mainDirectory;
-string creacionUserName; 
+vector<string> tasks;
+string creacionUserName;
 string creacionPassword;
 
-//Funcion para limpiar las pantallas segun el sistema operativo en el que se corra el programa (misma funcion hecha por chatGPT en la practica pasada)
+//Funcion para limpiar las pantallas segun el sistema operativo en el que se corra el programa
 void screenClear() {
 #ifdef _WIN32
     system("cls");
@@ -22,9 +22,11 @@ void screenClear() {
 #endif
 }
 
+
+
 // Panel de administrador
 
-void gestionPanel() {  // Apunte durante desarrollo // Estado de la funcion: COMPLETADA
+void gestionPanel() {
 
     cout << "Panel de gestion" << endl;
     cout << "\n" << endl;
@@ -80,7 +82,7 @@ void gestionPanel() {  // Apunte durante desarrollo // Estado de la funcion: COM
         for (int i = 0; i < users.size(); i++) { // recorremos el vector de usuarios de 1 en 1 imprimiendo los valores teniendo en cuenta que "i" siempre sera un numero = o < al tamaño total del vector
             cout << i << ": " << users[i] << endl;
         }
-        cout << "Selecciona el usuario al que deseas realizar la modificacion: (numero)"<<endl;
+        cout << "Selecciona el usuario al que deseas realizar la modificacion: (numero)";
         cin >> modifyPass;  // seleccion del usuario al que vamos a modificarle la contraseña
 
         if (modifyPass == 0) { // Avisaremos en caso que se intente cambiar el password de administrador
@@ -94,14 +96,7 @@ void gestionPanel() {  // Apunte durante desarrollo // Estado de la funcion: COM
             cout << "Introduce la nueva contrasenia para ese usuario" << endl;
             cin >> newpass;
 
-            passwords[modifyPass] = newpass;// lo mismo de arriba
-
-            cout << "Contrasenia del usuario: "<< users[modifyPass] << ", actualizada de manera exitosa..." << endl;
-            cout << "Regresando al menu..." << endl;
-
-            this_thread::sleep_for(chrono::seconds(2));
-            screenClear();
-            gestionPanel();
+            passwords[modifyPass] = newpass; // lo mismo de arriba
         }
 
         break;
@@ -165,39 +160,6 @@ void gestionPanel() {  // Apunte durante desarrollo // Estado de la funcion: COM
     }
 }
 
-void gestionDirectoryAdmin() {
-
-    cout << "Estas loggeado como ADMINISTRADOR" << endl;
-    cout << "\n" << endl;
-    cout << "1. Ver directorios" << endl;
-    cout << "2. Crear directorios" << endl;
-    cout << "3. Renombrar directorios" << endl;
-    cout << "4. Eliminar directorio" << endl;
-    cout << "5. Volver" << endl;
-
-    int seleccion;
-
-    cin >> seleccion;
-
-    switch (seleccion) {
-    case 1:
-        for (int i = 0; i < mainDirectory.size(); i++) {
-            cout << mainDirectory[i] << endl;
-        }
-        break;
-    case 2:
-
-        break;
-    case 3:
-        break;
-    case 4:
-        break;
-    case 5:
-        break;
-    }
-}
-
-
 void adminMenu() {
 
     cout << "Estas loggeado como ADMINISTRADOR" << endl;
@@ -221,33 +183,32 @@ void adminMenu() {
         gestionPanel();
         break;
     case 2:
-        cout << "Usuario:"; 
-        cin >> user; 
-        cout << "Contrasenia:"; 
-        cin >> password; 
+        cout << "Usuario:";
+        cin >> user;
+        cout << "Contrasenia:";
+        cin >> password;
 
         if (user == users[0] && password == passwords[0]) { // en caso de ingresar las credenciales almacenadas en el punto 0 del vector, las cuales corresponden siempre al admin, inicia sesion como admin
-            cout << "Iniciando sesion como administrador" << endl; 
+            cout << "Iniciando sesion como administrador" << endl;
             this_thread::sleep_for(chrono::seconds(2)); // timeout de 2 segundos  
             screenClear(); // Funcion para limpiar la pantalla 
-            adminMenu(); 
+            adminMenu();
         }
         else {
             for (int i = 1; i < users.size(); i++) { // bucle for que recorre los vectores saltando el primero (indice 0 ya que es el de admin) 
                 if (user == users[i] && password == passwords[i]) { // en caso que las credenciales user y password esten almacenadas en la misma posicion, acceso concedido  
                     cout << "Iniciando sesion" << endl;
-                    screenClear();  
-                    this_thread::sleep_for(chrono::seconds(2)); 
-                    cout << "ENDPOINT PROVISIONAL" << endl; 
+                    screenClear();
+                    this_thread::sleep_for(chrono::seconds(2));
+                    cout << "ENDPOINT PROVISIONAL" << endl;
                 }
                 else {
-                    cout << "Usuario o contraseña incorrecto" << endl; 
+                    cout << "Usuario o contraseña incorrecto" << endl;
                 }
             }
         }
         break;
     case 3:
-        gestionDirectoryAdmin();
         break;
     case 4:
         break;
@@ -257,6 +218,70 @@ void adminMenu() {
 
 }
 
+void taskGestor() {
+
+    cout << "Estas loggeado como ADMINISTRADOR" << endl;
+    cout << "\n" << endl;
+    cout << "1. Crear tarea" << endl;
+    cout << "2. Mostrar siguiente tarea" << endl;
+    cout << "3. Completar tarea" << endl;
+    cout << "4. Volver" << endl;
+
+    int seleccion;
+    cin >> seleccion;
+
+    string taskInsert; // // pese a que no queria declarar las estas variables con tal de no inicializarlas en caso de no ser necesario, las tengo que inicializar aqui porque sino da el siguiente error: transfer of control bypasses initialization of:C/C++(546)//
+
+    switch (seleccion) {
+    case 1:
+
+        screenClear();
+        cout << "Selecciona la tarea a insertar" << endl;
+        cin >> taskInsert; // La tarea a insertar
+
+        tasks.push_back(taskInsert); // Añadimos la tarea al final del vector de tareas
+
+        cout << "Tarea aniadida esitosamente wapo" << endl; // Mensaje motivador para que haga las tareas
+        cout << "Regresando al menu..." << endl;
+        this_thread::sleep_for(chrono::seconds(2)); // Se lo mucho que te gustan profe
+        screenClear();
+        taskGestor(); // volvemos al principio
+        break;
+    case 2:
+
+        screenClear();
+        cout << "Mostrando la siguiente tarea a completar: " << endl;
+        cout << tasks[0] << endl; // Entiendo que por el contexto, las tareas se tienen que mostrar en un orden, pero como indica solo la siguiente entiendo que solo quiere la que tendria que hacer ahora teoricamente
+
+        cout << "Press enter to return to main menu" << endl;
+        std::getline(cin, taskInsert); // para ahorrarte un timeout el chatGPT me ha explicado esto, uso el taskInsert ya que su funcion esta completada y no hace falta declarar otra variable solo para esto (aparte al ser un enter, se supone segun stackoverflow que limpia el contenido de la variable y la deja como "")
+        screenClear();
+        taskGestor();
+        break;
+    case 3:
+        screenClear();
+        cout << "Mostrando tareas: " << endl;
+        for (int i = 0; i < tasks.size(); i++) {
+            cout << i << ":" << tasks[i] << endl;
+        }
+        cout << "Selecciona la tarea que has completado para sacarla de pendientes (utiliza su valor en el indice)" << endl;
+
+        int taskElection;
+        cin >> taskElection;
+
+        tasks.erase(tasks.begin() + taskElection);
+        cout << "Tarea completada y eliminada de la lista" << endl;
+        cout << "Regresando al menu principal..." << endl;
+        this_thread::sleep_for(chrono::seconds(2));
+        screenClear();
+        taskGestor();
+        break;
+    case 4:
+        adminMenu();
+        break;
+
+    }
+}
 
 int main() {
 
@@ -278,12 +303,34 @@ int main() {
         for (int i = 1; i < users.size(); i++) { // bucle for que recorre los vectores saltando el primero (indice 0 ya que es el de admin)
             if (user == users[i] && password == passwords[i]) { // en caso que las credenciales user y password esten almacenadas en la misma posicion, acceso concedido
                 cout << "Iniciando sesion" << endl;
-                screenClear();
                 this_thread::sleep_for(chrono::seconds(2));
-                cout << "ENDPOINT PROVISIONAL" << endl;
+                screenClear(); 
+                cout << "Estas loggeado como: "<< users[i] << endl;
+                cout << "\n" << endl;
+                cout << "1. Cambiar usuario" << endl;
+                cout << "2. Gestionar directorios" << endl;
+                cout << "3. Gestionar tareas" << endl;
+                cout << "4. volver" << endl;
+
+                int seleccion;
+                cin >> seleccion;
+
+                switch (seleccion) {
+                case 1:
+                    main();
+                    break;
+                case 2:
+                    break;
+                case 3:
+                    break;
+                case 4:
+                    main();
+                    break;
+                }
+
             }
             else {
-                cout << "Usuario o contrasenia incorrecto" << endl;
+                cout << "Usuario o contraseña incorrecto" << endl;
             }
         }
     }
