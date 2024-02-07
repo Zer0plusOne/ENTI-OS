@@ -9,10 +9,11 @@ using namespace std;
 // incluimos los vectores que almacenaran en memoria los users y las passwords (les insertamos los valores de administrador manualmente)
 vector<string> users = { "admin" };
 vector<string> passwords = { "admin" };
-string creacionUserName;
+vector<string> mainDirectory;
+string creacionUserName; 
 string creacionPassword;
 
-//Funcion para limpiar las pantallas segun el sistema operativo en el que se corra el programa
+//Funcion para limpiar las pantallas segun el sistema operativo en el que se corra el programa (misma funcion hecha por chatGPT en la practica pasada)
 void screenClear() {
 #ifdef _WIN32
     system("cls");
@@ -23,7 +24,7 @@ void screenClear() {
 
 // Panel de administrador
 
-void gestionPanel() {
+void gestionPanel() {  // Apunte durante desarrollo // Estado de la funcion: COMPLETADA
 
     cout << "Panel de gestion" << endl;
     cout << "\n" << endl;
@@ -79,7 +80,7 @@ void gestionPanel() {
         for (int i = 0; i < users.size(); i++) { // recorremos el vector de usuarios de 1 en 1 imprimiendo los valores teniendo en cuenta que "i" siempre sera un numero = o < al tamaño total del vector
             cout << i << ": " << users[i] << endl;
         }
-        cout << "Selecciona el usuario al que deseas realizar la modificacion: (numero)";
+        cout << "Selecciona el usuario al que deseas realizar la modificacion: (numero)"<<endl;
         cin >> modifyPass;  // seleccion del usuario al que vamos a modificarle la contraseña
 
         if (modifyPass == 0) { // Avisaremos en caso que se intente cambiar el password de administrador
@@ -93,7 +94,14 @@ void gestionPanel() {
             cout << "Introduce la nueva contrasenia para ese usuario" << endl;
             cin >> newpass;
 
-            passwords[modifyPass] = newpass; // lo mismo de arriba
+            passwords[modifyPass] = newpass;// lo mismo de arriba
+
+            cout << "Contrasenia del usuario: "<< users[modifyPass] << ", actualizada de manera exitosa..." << endl;
+            cout << "Regresando al menu..." << endl;
+
+            this_thread::sleep_for(chrono::seconds(2));
+            screenClear();
+            gestionPanel();
         }
 
         break;
@@ -157,6 +165,39 @@ void gestionPanel() {
     }
 }
 
+void gestionDirectoryAdmin() {
+
+    cout << "Estas loggeado como ADMINISTRADOR" << endl;
+    cout << "\n" << endl;
+    cout << "1. Ver directorios" << endl;
+    cout << "2. Crear directorios" << endl;
+    cout << "3. Renombrar directorios" << endl;
+    cout << "4. Eliminar directorio" << endl;
+    cout << "5. Volver" << endl;
+
+    int seleccion;
+
+    cin >> seleccion;
+
+    switch (seleccion) {
+    case 1:
+        for (int i = 0; i < mainDirectory.size(); i++) {
+            cout << mainDirectory[i] << endl;
+        }
+        break;
+    case 2:
+
+        break;
+    case 3:
+        break;
+    case 4:
+        break;
+    case 5:
+        break;
+    }
+}
+
+
 void adminMenu() {
 
     cout << "Estas loggeado como ADMINISTRADOR" << endl;
@@ -206,6 +247,7 @@ void adminMenu() {
         }
         break;
     case 3:
+        gestionDirectoryAdmin();
         break;
     case 4:
         break;
@@ -241,7 +283,7 @@ int main() {
                 cout << "ENDPOINT PROVISIONAL" << endl;
             }
             else {
-                cout << "Usuario o contraseña incorrecto" << endl;
+                cout << "Usuario o contrasenia incorrecto" << endl;
             }
         }
     }
