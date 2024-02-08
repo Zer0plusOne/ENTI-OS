@@ -6,9 +6,13 @@
 #include <thread>
 
 using namespace std;
-// incluimos los vectores que almacenaran en memoria los users y las passwords (les insertamos los valores de administrador manualmente)
-vector<string> users = { "admin" };
-vector<string> passwords = { "admin" };
+
+const string adminUser = "admin";
+const string adminPass = "admin";
+
+// incluimos los vectores que almacenaran en memoria los users y las passwords (cargo las credenciales de usuario en el valor de indice 0 desde unas constantes definidas con anterioridad)
+vector<string> users = { adminUser };
+vector<string> passwords = { adminPass };
 vector<string> tasks;
 string creacionUserName;
 string creacionPassword;
@@ -22,7 +26,29 @@ void screenClear() {
 #endif
 }
 
+void userMenu() {
+    cout << "\n" << endl;
+    cout << "1. Cambiar usuario" << endl;
+    cout << "2. Gestionar directorios" << endl;
+    cout << "3. Gestionar Tareas" << endl;
+    cout << "4. Volver" << endl;
+    
+    int seleccion;
+    cin >> seleccion;
 
+    switch (seleccion) {
+    case 1:
+        break;
+    case 2:
+        break;
+    case 3:
+        break;
+    case 4:
+        break;
+    }
+
+
+}
 
 // Panel de administrador
 
@@ -39,7 +65,7 @@ void gestionPanel() {
 
     cin >> seleccion;
 
-    // Bloque de variables de los casos
+    // Bloque de variables de los casos del switch (los he tenido que declarar antes del bucle por el motivo que se explica en el primer comentarion de la variable delteuser)
 
     string deleteUser; // pese a que no queria declarar las estas variables con tal de no inicializarlas en caso de no ser necesario, las tengo que inicializar aqui porque sino da el siguiente error: transfer of control bypasses initialization of:C/C++(546)// 
     int modifyPass; // Este sera el valor del indice en el que se encuentran los usuarios en el vector, con tal de mas tarde poder modificar dicho vector
@@ -76,6 +102,7 @@ void gestionPanel() {
         }
         break;
     case 2:
+        screenClear();
         cout << "Menu de modificacion de password" << endl;
         cout << "\n" << endl;
         cout << "Usuarios Existentes:" << endl;
@@ -90,18 +117,22 @@ void gestionPanel() {
             cout << "Introduce la nueva contrasenia para ese usuario" << endl;
             cin >> newpass; // nueva password
 
-            passwords[modifyPass] = newpass; // Para asegurarnos que hemos cambiado el valor correcto, usaremos la seleccion (que recordemos era el valor del usuario en el indice del vector) y lo insertaremos directamente en su espacio correspondiente en el vector passwords
+            passwords[modifyPass] = newpass;// Para asegurarnos que hemos cambiado el valor correcto, usaremos la seleccion (que recordemos era el valor del usuario en el indice del vector) y lo insertaremos directamente en su espacio correspondiente en el vector passwords
+            screenClear();
+            gestionPanel();
         }
         else { // Exactamente lo mismo pero sin la necesidad de avisar sobre que se esta intentando cambiar la password del usuario administrador
             cout << "Introduce la nueva contrasenia para ese usuario" << endl;
             cin >> newpass;
 
             passwords[modifyPass] = newpass; // lo mismo de arriba
+            screenClear();
+            gestionPanel();
         }
 
         break;
     case 3:
-
+        screenClear();
         cout << "Menu de eliminacion de usuario" << endl;
         cout << "\n" << endl;
         // mostramos todo el vector users
@@ -146,13 +177,13 @@ void gestionPanel() {
             gestionPanel();
         }
         else {
-            for (int i = 1; i < users.size(); i++) { // bucle for que recorre los vectores saltando el primero (es el de admin)
-                if (user == users[i] && password == passwords[i]) { // en caso que las credenciales user y password esten almacenadas en la misma posicion, acceso concedido
-                    cout << "Iniciando sesion" << endl;
-                    screenClear();
+            for (int i = 1; i < users.size(); i++) { // bucle for que recorre los vectores saltando el primero (indice 0 ya que es el de admin) 
+                if (user == users[i] && password == passwords[i]) { // en caso que las credenciales user y password esten almacenadas en la misma posicion, acceso concedido  
+                    cout << "Iniciando sesion como: " << users[i] << endl;
                     this_thread::sleep_for(chrono::seconds(2));
-                    cout << "ENDPOINT PROVISIONAL" << endl;
-                    break;
+                    screenClear();
+                    cout << "Estas loggeado como: " << users[i] << endl;
+                    userMenu();
                 }
             }
         }
@@ -197,10 +228,11 @@ void adminMenu() {
         else {
             for (int i = 1; i < users.size(); i++) { // bucle for que recorre los vectores saltando el primero (indice 0 ya que es el de admin) 
                 if (user == users[i] && password == passwords[i]) { // en caso que las credenciales user y password esten almacenadas en la misma posicion, acceso concedido  
-                    cout << "Iniciando sesion" << endl;
-                    screenClear();
+                    cout << "Iniciando sesion como: "<< users[i] << endl;
                     this_thread::sleep_for(chrono::seconds(2));
-                    cout << "ENDPOINT PROVISIONAL" << endl;
+                    screenClear();
+                    cout << "Estas loggeado como: " << users[i] << endl;
+                    userMenu();
                 }
                 else {
                     cout << "Usuario o contraseña incorrecto" << endl;
@@ -304,8 +336,8 @@ int main() {
             if (user == users[i] && password == passwords[i]) { // en caso que las credenciales user y password esten almacenadas en la misma posicion, acceso concedido
                 cout << "Iniciando sesion" << endl;
                 this_thread::sleep_for(chrono::seconds(2));
-                screenClear(); 
-                cout << "Estas loggeado como: "<< users[i] << endl;
+                screenClear();
+                cout << "Estas loggeado como: " << users[i] << endl;
                 cout << "\n" << endl;
                 cout << "1. Cambiar usuario" << endl;
                 cout << "2. Gestionar directorios" << endl;
